@@ -1,0 +1,89 @@
+*{
+    box-sizing: border-box;
+}
+[hidden]{
+    display: none !important;
+}
+:root{
+    --radius: 14px;
+    --radius-lg: 20px;
+    --shadow-md: 0 12px 32px -10px rgba(0,0,0,0.5);
+}
+body{
+    background:
+        radial-gradient(1200px circle at 12% 18%, rgba(217, 164, 101, 0.16), transparent 42%),
+        radial-gradient(1100px circle at 88% 82%, rgba(107, 74, 74, 0.55), transparent 46%),
+        linear-gradient(160deg, #14171b 0%, #1b1f24 45%, #0c0d0f 100%);
+    background-attachment: fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+.title{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 52px 5% 20px;
+}
+h1{
+    display: inline-block;
+    color:white;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    background-color: rgb(86, 62, 62);
+    padding: 0.6em 1.1em;
+    text-align: center;
+    border-radius: var(--radius-lg);
+    font-size: clamp(1.75rem, 1rem + 3vw, 4rem);
+    box-shadow: var(--shadow-md);
+}
+.board{
+    display: flex;
+    justify-content: center;
+    padding: 20px 5% 80px;
+}
+.board-card{
+    width: 100%;
+    max-width: 720px;
+    background-color: rgb(86, 62, 62);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 1.5em;
+    color: white;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+.board-status{
+    text-align: center;
+    font-size: 1.2rem;
+    margin: 0.5em 0;
+}
+.board-table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: clamp(1rem, 0.9rem + 0.3vw, 1.25rem);
+}
+.board-table th{
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75em;
+    padding: 0 0.6em 0.6em;
+    border-bottom: 2px solid rgba(255,255,255,0.35);
+    color: rgba(255,255,255,0.75);
+}
+.board-table td{
+    padding: 0.7em 0.6em;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+.board-table tr:last-child td{
+    border-bottom: none;
+}
+.col-rank{
+    width: 3.5em;
+    font-weight: bold;
+}
+.col-points{
+    text-align: right;
+    font-weight: bold;
+    white-space: nowrap;
+}

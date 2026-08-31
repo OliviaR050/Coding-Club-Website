@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset = "utf-8">
+            <meta name = "viewport" content = "width=device-width, initial-scale=1">
+            <link rel = "stylesheet" href = "Leaderboard.css">
+            <title>
+                Millersville Coding Club
+            </title>
+        </head>
+        <body>
+            <div class = "title">
+                <h1>
+                    Leaderboard
+                </h1>
+            </div>
+            <div class = "board">
+                <div class = "board-card" id = "board-card">
+                    <p class = "board-status" id = "board-status">Loading leaderboard...</p>
+                    <table class = "board-table" id = "board-table" hidden>
+                        <thead>
+                            <tr>
+                                <th class = "col-rank">Rank</th>
+                                <th class = "col-name">Name</th>
+                                <th class = "col-points">Points</th>
+                            </tr>
+                        </thead>
+                        <tbody id = "board-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <script>
+                async function loadLeaderboard() {
+                    const status = document.getElementById("board-status");
+                    const table = document.getElementById("board-table");
+                    const body = document.getElementById("board-body");
+
+                    try {
+                        const response = await fetch("/api/leaderboard");
+                        if (!response.ok) throw new Error("Request failed");
+                        const rows = await response.json();
+
+                        if (rows.length === 0) {
+                            status.textContent = "No verified members on the leaderboard yet.";
+                            return;
+                        }
+
+                        rows.forEach((row, index) => {
+                            const tr = document.createElement("tr");
+
+                            const rankCell = document.createElement("td");
+                            rankCell.className = "col-rank";
+                            rankCell.textContent = index + 1;
+
+                            const nameCell = document.createElement("td");
+                            nameCell.className = "col-name";
+                            nameCell.textContent = row.display_name;
+
+                            const pointsCell = document.createElement("td");
+                            pointsCell.className = "col-points";
+                            pointsCell.textContent = row.points;
+
+                            tr.appendChild(rankCell);
+                            tr.appendChild(nameCell);
+                            tr.appendChild(pointsCell);
+                            body.appendChild(tr);
+                        });
+
+                        status.hidden = true;
+                        table.hidden = false;
+                    } catch (err) {
+                        status.textContent = "Couldn't load the leaderboard right now. Try again later.";
+                    }
+                }
+
+                loadLeaderboard();
+            </script>
+        </body>
+    </html>

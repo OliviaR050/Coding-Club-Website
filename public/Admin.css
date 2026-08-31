@@ -1,0 +1,138 @@
+*{
+    box-sizing: border-box;
+}
+[hidden]{
+    display: none !important;
+}
+:root{
+    --radius: 14px;
+    --radius-lg: 20px;
+    --shadow-md: 0 12px 32px -10px rgba(0,0,0,0.5);
+}
+body{
+    background:
+        radial-gradient(1200px circle at 12% 18%, rgba(217, 164, 101, 0.16), transparent 42%),
+        radial-gradient(1100px circle at 88% 82%, rgba(107, 74, 74, 0.55), transparent 46%),
+        linear-gradient(160deg, #14171b 0%, #1b1f24 45%, #0c0d0f 100%);
+    background-attachment: fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    color: white;
+}
+.title{
+    display: flex;
+    justify-content: center;
+    padding: 52px 5% 20px;
+}
+h1{
+    background-color: rgb(86, 62, 62);
+    padding: 0.6em 1.1em;
+    border-radius: var(--radius-lg);
+    font-size: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    box-shadow: var(--shadow-md);
+    margin: 0;
+}
+.panel{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 0 5% 80px;
+}
+.card{
+    width: 100%;
+    max-width: 720px;
+    background-color: rgb(86, 62, 62);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 1.5em;
+}
+.card h2{
+    margin-top: 0;
+    font-size: 1.3rem;
+}
+.hint{
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9rem;
+}
+.error{
+    background: rgba(150,40,40,0.5);
+    border-radius: var(--radius);
+    padding: 0.6em 1em;
+    font-size: 0.9rem;
+}
+label{
+    display: block;
+    margin-bottom: 1em;
+}
+input{
+    display: block;
+    width: 100%;
+    margin-top: 0.3em;
+    padding: 0.5em 0.7em;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-family: inherit;
+    font-size: 1rem;
+}
+button{
+    padding: 0.5em 1.1em;
+    border-radius: 8px;
+    border: 2px solid #555;
+    background: white;
+    color: #333;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+button.secondary{
+    background: transparent;
+    color: white;
+    border-color: rgba(255,255,255,0.5);
+}
+.dashboard-header{
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.status{
+    text-align: center;
+    min-height: 1.2em;
+}
+.inline-form{
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.inline-form input{
+    width: auto;
+    flex: 1 1 auto;
+    margin-top: 0;
+}
+.admin-table{
+    width: 100%;
+    border-collapse: collapse;
+}
+.admin-table th{
+    text-align: left;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.7);
+    padding: 0 0.5em 0.5em;
+    border-bottom: 2px solid rgba(255,255,255,0.3);
+}
+.admin-table td{
+    padding: 0.6em 0.5em;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    vertical-align: middle;
+}
+.admin-table button{
+    margin-right: 6px;
+}

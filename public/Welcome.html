@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset = "utf-8">
+            <meta name = "viewport" content = "width=device-width, initial-scale=1">
+            <title>
+                Millersville Coding Club
+            </title>
+            <link rel="stylesheet" href = "Welcome.css">
+        </head>
+
+        <body>
+            <div class = "welcome">
+                <div class = "center">
+                    <h1>
+                        Welcome to Coding Club!
+                    </h1>
+                </div>
+                <div class = "nav-buttons">
+                    <button class = "button-weekly" id = "weekly">
+                        <b>
+                            WEEKLY PROBLEMS
+                        </b>
+                    </button>
+                    <button class = "button-leaderboard" id = "leaderboard">
+                        <b>
+                            LEADERBOARD
+                        </b>
+                    </button>
+                    <button class = "button-officers" id = "officers">
+                         <b>
+                            MEET THE OFFICERS
+                        </b>
+                    </button>
+                    <script>
+                        document.getElementById("weekly").addEventListener("click", function(){
+                            window.location.href = "Weekly.html";
+                        });
+                        document.getElementById("leaderboard").addEventListener("click", function(){
+                            window.location.href = "Leaderboard.html";
+                        });
+                        document.getElementById("officers").addEventListener("click", function(){
+                            window.location.href = "Officers.html";
+                        });
+                    </script>
+                </div>
+                    <div class = "left">
+                        <div class = "image">
+                            <img src="Millersville.webp">
+                            <pp> <b> <a href = "https://discord.com/invite/mhxBuNu" target = "_blank"> Join Our Discord! </a>  </b> </pp>
+                        </div>
+                        <p4>
+                            Hello World! We are coding club at Millersville Univeristy! Our meeting time for fall of 2026 is 1pm-2pm on Mondays in the Linux Lab. We hold weekly meetings where we solve <a href = "https://open.kattis.com/" target = "_blank"> Kattis Problems. </a> The officers go over how to solve these coding problems each meeting and are available for help. 
+                        </p4>
+                    </div>
+                <div class = "right">
+                    <p5>
+                        Events are held occasionally where students get the opportunity to go to hackathons such as CCSC or ICPC and more! We understand not everyone is always able to come to our meetings so we provide our problems online as well. If you click the weekly problems button you can see which set we are currently on.
+                    </p5>
+                    <div class = "image1">
+                        <img src="CCSC.webp">
+                    </div>
+                </div>
+                <div class = "left">
+                    <div class = "image2">
+                        <img src="pedestal.png">
+                    </div>
+                    <p6>
+                    We are also testing out a new point system this semester where you gain points for attendance, solving problems, and participating in events. The top 3 winners will be given mystery prizes yet to be determined by the officers. In order to see your points and everyone else's please click on the leaderboard button. If you have anymore questions about coding club you can find contact for one of our officers through the officers button. Thank you!
+                    </p6>
+                </div>
+            </div>
+        </body>
+    </html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset = "utf-8">
+            <meta name = "viewport" content = "width=device-width, initial-scale=1">
+            <link rel = "stylesheet" href = "Admin.css">
+            <title>
+                Millersville Coding Club
+            </title>
+        </head>
+        <body>
+            <div class = "title">
+                <h1>Officer Admin</h1>
+            </div>
+
+            <div class = "panel" id = "login-panel">
+                <form id = "login-form" class = "card">
+                    <h2>Officer Login</h2>
+                    <p class = "error" id = "login-error" hidden></p>
+                    <label>
+                        Username
+                        <input type = "text" id = "login-username" autocomplete = "username" required>
+                    </label>
+                    <label>
+                        Password
+                        <input type = "password" id = "login-password" autocomplete = "current-password" required>
+                    </label>
+                    <button type = "submit">Log In</button>
+                </form>
+            </div>
+
+            <div class = "panel" id = "dashboard-panel" hidden>
+                <div class = "dashboard-header">
+                    <button id = "sync-button">Sync Kattis Roster</button>
+                    <button id = "logout-button" class = "secondary">Log Out</button>
+                </div>
+                <p class = "status" id = "sync-status"></p>
+
+                <section class = "card">
+                    <h2>Add Member by Kattis Username</h2>
+                    <form id = "add-member-form" class = "inline-form">
+                        <input type = "text" id = "add-member-username" placeholder = "kattis-username" required>
+                        <button type = "submit">Add</button>
+                    </form>
+                    <p class = "error" id = "add-member-error" hidden></p>
+                </section>
+
+                <section class = "card">
+                    <h2>Pending Verification</h2>
+                    <p class = "hint">These usernames came from Kattis or were added manually. Confirm each one is an actual club member before verifying.</p>
+                    <table class = "admin-table" id = "pending-table">
+                        <thead>
+                            <tr>
+                                <th>Kattis Username</th>
+                                <th>Name</th>
+                                <th>Kattis Rank</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id = "pending-body"></tbody>
+                    </table>
+                    <p class = "hint" id = "pending-empty" hidden>Nothing pending.</p>
+                </section>
+
+                <section class = "card">
+                    <h2>Verified Members</h2>
+                    <table class = "admin-table" id = "verified-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Points</th>
+                                <th>Award Points</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id = "verified-body"></tbody>
+                    </table>
+                    <p class = "hint" id = "verified-empty" hidden>No verified members yet.</p>
+                </section>
+            </div>
+
+            <script>
+                const loginPanel = document.getElementById("login-panel");
+                const dashboardPanel = document.getElementById("dashboard-panel");
+
+                async function api(path, options) {
+                    const response = await fetch(path, {
+                        headers: { "Content-Type": "application/json" },
+                        ...options,
+                    });
+                    const data = await response.json().catch(() => ({}));
+                    if (!response.ok) throw new Error(data.error || "Request failed");
+                    return data;
+                }
+
+                function showDashboard() {
+                    loginPanel.hidden = true;
+                    dashboardPanel.hidden = false;
+                    refreshMembers();
+                }
+
+                function showLogin() {
+                    loginPanel.hidden = false;
+                    dashboardPanel.hidden = true;
+                }
+
+                document.getElementById("login-form").addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const errorEl = document.getElementById("login-error");
+                    errorEl.hidden = true;
+                    try {
+                        await api("/api/admin/login", {
+                            method: "POST",
+                            body: JSON.stringify({
+                                username: document.getElementById("login-username").value,
+                                password: document.getElementById("login-password").value,
+                            }),
+                        });
+                        showDashboard();
+                    } catch (err) {
+                        errorEl.textContent = err.message;
+                        errorEl.hidden = false;
+                    }
+                });
+
+                document.getElementById("logout-button").addEventListener("click", async () => {
+                    await api("/api/admin/logout", { method: "POST" });
+                    showLogin();
+                });
+
+                document.getElementById("sync-button").addEventListener("click", async () => {
+                    const status = document.getElementById("sync-status");
+                    status.textContent = "Syncing...";
+                    try {
+                        const result = await api("/api/admin/sync-kattis", { method: "POST" });
+                        status.textContent = `Found ${result.found} Kattis users — ${result.inserted} new, ${result.updated} updated.`;
+                        refreshMembers();
+                    } catch (err) {
+                        status.textContent = err.message;
+                    }
+                });
+
+                document.getElementById("add-member-form").addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const input = document.getElementById("add-member-username");
+                    const errorEl = document.getElementById("add-member-error");
+                    errorEl.hidden = true;
+                    try {
+                        await api("/api/admin/members", {
+                            method: "POST",
+                            body: JSON.stringify({ kattisUsername: input.value.trim() }),
+                        });
+                        input.value = "";
+                        refreshMembers();
+                    } catch (err) {
+                        errorEl.textContent = err.message;
+                        errorEl.hidden = false;
+                    }
+                });
+
+                async function refreshMembers() {
+                    const members = await api("/api/admin/members");
+                    const pending = members.filter((m) => !m.verified);
+                    const verified = members.filter((m) => m.verified);
+                    renderPending(pending);
+                    renderVerified(verified);
+                }
+
+                function renderPending(members) {
+                    const body = document.getElementById("pending-body");
+                    body.innerHTML = "";
+                    document.getElementById("pending-empty").hidden = members.length > 0;
+
+                    members.forEach((member) => {
+                        const tr = document.createElement("tr");
+
+                        const usernameCell = document.createElement("td");
+                        usernameCell.textContent = member.kattis_username;
+
+                        const nameCell = document.createElement("td");
+                        nameCell.textContent = member.display_name;
+
+                        const rankCell = document.createElement("td");
+                        rankCell.textContent = member.kattis_rank ?? "—";
+
+                        const actionCell = document.createElement("td");
+                        const verifyBtn = document.createElement("button");
+                        verifyBtn.textContent = "Verify";
+                        verifyBtn.addEventListener("click", async () => {
+                            await api(`/api/admin/members/${member.id}/verify`, { method: "POST" });
+                            refreshMembers();
+                        });
+                        const rejectBtn = document.createElement("button");
+                        rejectBtn.textContent = "Reject";
+                        rejectBtn.className = "secondary";
+                        rejectBtn.addEventListener("click", async () => {
+                            await api(`/api/admin/members/${member.id}`, { method: "DELETE" });
+                            refreshMembers();
+                        });
+                        actionCell.appendChild(verifyBtn);
+                        actionCell.appendChild(rejectBtn);
+
+                        tr.appendChild(usernameCell);
+                        tr.appendChild(nameCell);
+                        tr.appendChild(rankCell);
+                        tr.appendChild(actionCell);
+                        body.appendChild(tr);
+                    });
+                }
+
+                function renderVerified(members) {
+                    const body = document.getElementById("verified-body");
+                    body.innerHTML = "";
+                    document.getElementById("verified-empty").hidden = members.length > 0;
+
+                    members.forEach((member) => {
+                        const tr = document.createElement("tr");
+
+                        const nameCell = document.createElement("td");
+                        nameCell.textContent = member.display_name;
+
+                        const pointsCell = document.createElement("td");
+                        pointsCell.textContent = member.points;
+
+                        const formCell = document.createElement("td");
+                        const form = document.createElement("form");
+                        form.className = "inline-form";
+
+                        const amountInput = document.createElement("input");
+                        amountInput.type = "number";
+                        amountInput.placeholder = "amount";
+                        amountInput.required = true;
+                        amountInput.style.width = "5.5em";
+
+                        const reasonInput = document.createElement("input");
+                        reasonInput.type = "text";
+                        reasonInput.placeholder = "reason";
+                        reasonInput.required = true;
+
+                        const submitBtn = document.createElement("button");
+                        submitBtn.type = "submit";
+                        submitBtn.textContent = "Award";
+
+                        form.appendChild(amountInput);
+                        form.appendChild(reasonInput);
+                        form.appendChild(submitBtn);
+
+                        form.addEventListener("submit", async (e) => {
+                            e.preventDefault();
+                            await api(`/api/admin/members/${member.id}/points`, {
+                                method: "POST",
+                                body: JSON.stringify({
+                                    amount: amountInput.value,
+                                    reason: reasonInput.value,
+                                }),
+                            });
+                            refreshMembers();
+                        });
+
+                        formCell.appendChild(form);
+
+                        const removeCell = document.createElement("td");
+                        const removeBtn = document.createElement("button");
+                        removeBtn.textContent = "Remove";
+                        removeBtn.className = "secondary";
+                        removeBtn.addEventListener("click", async () => {
+                            const confirmed = confirm(
+                                `Remove ${member.display_name} from the club? This deletes their point history too.`
+                            );
+                            if (!confirmed) return;
+                            await api(`/api/admin/members/${member.id}`, { method: "DELETE" });
+                            refreshMembers();
+                        });
+                        removeCell.appendChild(removeBtn);
+
+                        tr.appendChild(nameCell);
+                        tr.appendChild(pointsCell);
+                        tr.appendChild(formCell);
+                        tr.appendChild(removeCell);
+                        body.appendChild(tr);
+                    });
+                }
+
+                (async function init() {
+                    try {
+                        const { loggedIn } = await api("/api/admin/me");
+                        if (loggedIn) showDashboard();
+                    } catch (err) {
+                        // stay on login screen
+                    }
+                })();
+            </script>
+        </body>
+    </html>
