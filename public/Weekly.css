@@ -25,7 +25,7 @@ body{
     min-height: 100vh;
     justify-content: center;
     padding: 40px 5% 80px;
-    gap: 0px;
+    gap: 20px;
 }
 h1{
     text-align: center;
