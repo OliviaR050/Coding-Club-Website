@@ -90,6 +90,24 @@ router.post("/admin/members/:id/points", async (req, res) => {
   res.status(201).json(rows[0]);
 });
 
+router.get("/admin/history", async (req, res) => {
+  const { rows } = await pool.query(`
+    SELECT
+      p.id,
+      p.amount,
+      p.reason,
+      p.created_at,
+      m.display_name AS member_name,
+      o.username AS awarded_by
+    FROM point_entries p
+    JOIN members m ON m.id = p.member_id
+    LEFT JOIN officers o ON o.id = p.awarded_by
+    ORDER BY p.created_at DESC
+    LIMIT 500
+  `);
+  res.json(rows);
+});
+
 router.post("/admin/sync-kattis", async (req, res) => {
   let roster;
   try {
